@@ -1,0 +1,86 @@
+import tkinter as tk
+from tkinter import filedialog
+from docx import Document
+import threading
+import time
+
+class SpeedReaderApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("HeadSpace")
+        self.wpm = 300
+        self.words = []
+        self.running = False
+        self.index = 0
+        self.thread = None
+        self.lock = threading.Lock()
+
+        self.label = tk.Label(root, text= "", font=("Helvetica", 32))
+        self.label.pack(pady=50)
+
+        control_frame = tk.Frame(root)
+        control_frame.pack()
+
+        tk.Button(control_frame, text="Load Document", command=self.load_doc).pack(side=tk.LEFT, padx=10)
+        tk.Button(control_frame, text="Start/Resume", command=self.start_or_resume).pack(side=tk.LEFT, padx=10)
+        tk.Button(control_frame, text="Pause", command=self.pause).pack(side=tk.LEFT, padx=10)
+        tk.Button(control_frame, text= "Restart", command=self.restart).pack(side=tk.LEFT, padx=10)
+
+        self.speed = tk.Scale(control_frame, from_=100, to=1000, orient=tk.HORIZONTAL, label="WPM", command=self.set_speed)
+        self.speed.set(self.wpm)
+        self.speed.pack(padx=20)
+
+# Method to load a Word document and extract words
+# Need to update this method to handle the file dialog and extract words from the document
+    def load_doc(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Word Documents", "*.docx")])
+        if file_path:
+            doc = Document(file_path)
+            self.words = []
+            for para in doc.paragraphs:
+                self.words.extend(para.text.split())
+            self.index = 0
+            self.label.config(text="")
+            self.running = False
+
+# Method to start or resume the speed reading
+    def start_or_resume(self):
+        if not self.words:
+            return
+        with self.lock:
+            self.running = True
+        if not self.thread or not self.thread.is_alive():
+            self.thread = threading.Thread(target=self.run)
+            self.thread.start()
+
+# Method to pause the speed reading
+    def pause(self):
+        with self.lock:
+            self.running = False
+
+# Method to restart the speed reading
+    def restart(self):
+        with self.lock:
+            self.running = False
+        self.index = 0
+        self.label.config(text="")
+        self.start_or_resume()
+
+# Method to run the speed reading in a separate thread
+    def run(self):
+        while self.index < len(self.words):
+            with self.lock:
+                if not self.running:
+                    time.sleep(0.1)
+                    continue
+            self.label.config(text=self.words[self.index])
+            time.sleep(60 / self.wpm)
+            self.index += 1
+
+# Method to set the speed in words per minute
+    def set_speed(self, val):
+        self.wpm = int(val)
+
+root = tk.Tk()
+app = SpeedReaderApp(root)
+root.mainloop()
