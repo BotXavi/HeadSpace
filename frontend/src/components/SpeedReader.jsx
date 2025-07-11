@@ -9,7 +9,7 @@ function SpeedReader({ words }) {
   useEffect(() => {
     if (running) {
       intervalRef.current = setInterval(() => {
-        setIndex((prev) => Math.min(prev + 1, words.length - 1));
+        setIndex((i) => (i < words.length - 1 ? i + 1 : i));
       }, 60000 / wpm);
     } else {
       clearInterval(intervalRef.current);
@@ -18,28 +18,43 @@ function SpeedReader({ words }) {
     return () => clearInterval(intervalRef.current);
   }, [running, wpm]);
 
-  const handleStartPause = () => setRunning((prev) => !prev);
+  const handleStartPause = () => setRunning((r) => !r);
   const handleRestart = () => {
     setRunning(false);
     setIndex(0);
   };
 
   return (
-    <div className="text-center mt-8">
-      <div className="text-5xl font-mono h-20">{words[index]}</div>
-      <div className="flex justify-center items-center gap-4 mt-4">
-        <button onClick={handleStartPause}>
+    <div className="flex flex-col items-center justify-center mt-10 w-full max-w-xl">
+      <div className="text-6xl font-mono font-bold text-center h-32 transition-all duration-200 ease-in-out">
+        {words[index]}
+      </div>
+
+      <div className="flex items-center gap-4 mt-8">
+        <button
+          onClick={handleStartPause}
+          className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded"
+        >
           {running ? "Pause" : "Start"}
         </button>
-        <button onClick={handleRestart}>Restart</button>
+        <button
+          onClick={handleRestart}
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded"
+        >
+          Restart
+        </button>
+      </div>
+
+      <div className="mt-6 w-full max-w-md">
+        <label className="block mb-2 font-medium">Words Per Minute (WPM): {wpm}</label>
         <input
           type="range"
           min="100"
           max="800"
           value={wpm}
           onChange={(e) => setWpm(Number(e.target.value))}
+          className="w-full accent-blue-500"
         />
-        <span>{wpm} WPM</span>
       </div>
     </div>
   );
