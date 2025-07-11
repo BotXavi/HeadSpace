@@ -25,6 +25,7 @@
 
 ## Project Structure
 
+```bash
 Headspace/
 ├── backend/
 │ ├── main.py # FastAPI entrypoint
@@ -41,7 +42,7 @@ Headspace/
 │ └── package.json
 │
 └── README.md
-
+```
 
 ## Installation
 
@@ -50,5 +51,44 @@ Headspace/
 ```bash
 git clone https://github.com/your-username/headspace.git
 cd headspace
+```
 
+### 2. Setup Backend (Fast API)
 
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+The backend will run at http://localhost:8000.
+
+### 3. Setup Frontend (React)
+
+```bash
+cd ../frontend
+npm install
+npm start
+```
+The frontend will run at http://localhost:3000.
+
+## Usage
+
+1. Launch both the backend and frontend servers
+2. Go to http://localhost:3000
+3. Upload a .pdf, .docx, or .txt file
+4. Adjust the WPM slider
+5. Click Start to begin rapid reading
+
+## Example files
+
+- sample.txt – Plain text file
+- article.docx – Sample Word document
+- paper.pdf – Extractable text PDF
+
+## Roadmap / Future Features
+
+- Sentence/phrase display mode
+- Dark mode toggle
+- User accounts and saved sessions
+- Mobile optimization
+- Reading comprehension tools
