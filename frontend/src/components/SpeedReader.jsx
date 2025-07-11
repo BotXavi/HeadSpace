@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import "./SpeedReader.css";
 
 function SpeedReader({ words }) {
   const [index, setIndex] = useState(0);
@@ -16,7 +17,7 @@ function SpeedReader({ words }) {
     }
 
     return () => clearInterval(intervalRef.current);
-  }, [running, wpm]);
+  }, [running, wpm, words.length]);
 
   const handleStartPause = () => setRunning((r) => !r);
   const handleRestart = () => {
@@ -25,36 +26,58 @@ function SpeedReader({ words }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center mt-10 w-full max-w-xl">
-      <div className="text-6xl font-mono font-bold text-center h-32 transition-all duration-200 ease-in-out">
-        {words[index]}
-      </div>
+    <div className="speed-reader-container">
+      <div className="speed-reader-card">
+        {/* Word Display Box */}
+        <div className="word-display-container">
+          <div className="word-display">
+            {words[index] || "Ready to read..."}
+          </div>
+          <div className="word-progress">
+            Word {index + 1} of {words.length}
+          </div>
+          <div className="progress-bar">
+            <div 
+              className="progress-fill"
+              style={{ width: `${((index + 1) / words.length) * 100}%` }}
+            ></div>
+          </div>
+        </div>
 
-      <div className="flex items-center gap-4 mt-8">
-        <button
-          onClick={handleStartPause}
-          className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded"
-        >
-          {running ? "Pause" : "Start"}
-        </button>
-        <button
-          onClick={handleRestart}
-          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded"
-        >
-          Restart
-        </button>
-      </div>
+        {/* Control Buttons */}
+        <div className="controls-container">
+          <button
+            onClick={handleStartPause}
+            className={`control-button start-pause-button ${running ? 'pause' : 'start'}`}
+          >
+            {running ? "Pause" : "Start"}
+          </button>
+          <button
+            onClick={handleRestart}
+            className="control-button restart-button"
+          >
+            Restart
+          </button>
+        </div>
 
-      <div className="mt-6 w-full max-w-md">
-        <label className="block mb-2 font-medium">Words Per Minute (WPM): {wpm}</label>
-        <input
-          type="range"
-          min="100"
-          max="800"
-          value={wpm}
-          onChange={(e) => setWpm(Number(e.target.value))}
-          className="w-full accent-blue-500"
-        />
+        {/* Speed Control */}
+        <div className="speed-control">
+          <label className="speed-label">
+            Words Per Minute: {wpm}
+          </label>
+          <div className="speed-slider-container">
+            <span className="speed-min">100</span>
+            <input
+              type="range"
+              min="100"
+              max="800"
+              value={wpm}
+              onChange={(e) => setWpm(Number(e.target.value))}
+              className="speed-slider"
+            />
+            <span className="speed-max">800</span>
+          </div>
+        </div>
       </div>
     </div>
   );
