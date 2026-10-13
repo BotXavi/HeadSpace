@@ -14,7 +14,7 @@
 
 ### Frontend
 - React
-- HTML/CSS or Tailwind (optional)
+- HTML/CSS
 - Fetch API for backend communication
 
 ### Backend
@@ -44,7 +44,7 @@ Headspace/
 └── README.md
 ```
 
-## Installation
+## Installation to test
 
 ### 1. Clone the Repository
 
